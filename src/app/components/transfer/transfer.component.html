@@ -1,0 +1,154 @@
+<div class="min-h-screen bg-gray-50">
+      <!-- Navigation -->
+      <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex items-center">
+              <button
+                (click)="goBack()"
+                class="mr-4 p-2 text-gray-400 hover:text-gray-600"
+              >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+              </button>
+              <h1 class="text-xl font-semibold text-gray-900">Transférer de l'argent</h1>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="text-center mb-8">
+            <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+              </svg>
+            </div>
+            <h2 class="mt-6 text-2xl font-bold text-gray-900">Transfert d'argent</h2>
+            <p class="mt-2 text-gray-600">Envoyez de l'argent à un autre utilisateur</p>
+            
+            <div class="mt-4 bg-gray-50 rounded-lg p-4">
+              <p class="text-sm text-gray-600">Solde disponible</p>
+              <p class="text-2xl font-bold text-gray-900">{{ currentUser?.balance | currency:'XOF':'symbol':'1.2-2' }}</p>
+            </div>
+          </div>
+
+          <form (ngSubmit)="onSubmit()" class="space-y-6">
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                Numéro de téléphone du destinataire
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                [(ngModel)]="transferData.toUserPhone"
+                required
+                class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Numéro de téléphone"
+              />
+            </div>
+
+            <div>
+              <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">
+                Montant à transférer (XOF)
+              </label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></span>
+                <input
+                  id="amount"
+                  name="amount"
+                  type="number"
+                  min="1"
+                  step="0.01"
+                  [(ngModel)]="transferData.amount"
+                  (input)="calculateFees()"
+                  required
+                  class="block w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                Description (optionnel)
+              </label>
+              <input
+                id="description"
+                name="description"
+                type="text"
+                [(ngModel)]="transferData.description"
+                class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Motif du transfert"
+              />
+            </div>
+
+            <div *ngIf="transferData.amount && transferData.amount > 0" class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Montant à transférer :</span>
+                <span class="text-gray-900 font-medium">{{ transferData.amount | currency:'XOF':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Frais (0.5%) :</span>
+                <span class="text-gray-900 font-medium">{{ fees | currency:'XOF':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="border-t border-gray-200 pt-2">
+                <div class="flex justify-between font-medium">
+                  <span class="text-gray-900">Total prélevé :</span>
+                  <span class="text-gray-900">{{ totalAmount | currency:'XOF':'symbol':'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-blue-800">Information sur les frais</h3>
+                  <p class="text-sm text-blue-700 mt-1">
+                    Des frais de 0.5% sont appliqués sur tous les transferts. Le destinataire recevra le montant exact sans déduction.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+              {{ error }}
+            </div>
+
+            <div *ngIf="success" class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
+              {{ success }}
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="loading || !transferData.amount || transferData.amount <= 0 || !transferData.toUserPhone || !canTransfer()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span *ngIf="loading" class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+              {{ loading ? 'Traitement...' : 'Effectuer le transfert' }}
+            </button>
+
+            <div *ngIf="transferData.amount && transferData.amount > 0 && !canTransfer()" class="text-center">
+              <p class="text-red-600 text-sm">Solde insuffisant pour ce transfert</p>
+            </div>
+          </form>
+
+          <div class="mt-6 text-center">
+            <button
+              (click)="goBack()"
+              class="text-gray-600 hover:text-gray-800 font-medium transition duration-200"
+            >
+              Annuler et retourner au tableau de bord
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>

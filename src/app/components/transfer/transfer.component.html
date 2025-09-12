@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-gray-50">
       <!-- Navigation -->
-      <nav class="bg-white shadow-sm border-b">
+      <nav class="bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between h-16">
             <div class="flex items-center">
@@ -37,18 +37,21 @@
 
           <form (ngSubmit)="onSubmit()" class="space-y-6">
             <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                Numéro de téléphone du destinataire
+              <label for="compte" class="block text-sm font-medium text-gray-700 mb-2">
+                Compte destinataire
               </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
+              <select
+                id="compte"
+                name="compte"
                 [(ngModel)]="transferData.toUserPhone"
                 required
                 class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Numéro de téléphone"
-              />
+              >
+                <option value="" disabled selected>Choisissez un destinataire</option>
+                <option *ngFor="let user of users" [value]="user.phone">
+                  {{ user.firstName }} ({{ user.phone }})
+                </option>
+              </select>
             </div>
 
             <div>

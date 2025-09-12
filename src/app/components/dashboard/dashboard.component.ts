@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
 import { User } from '../../models/user.interface';
@@ -9,7 +9,7 @@ import { Transaction } from '../../models/transaction.interface';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -88,19 +88,19 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateToDeposit(): void {
-    this.router.navigate(['/deposit']);
+    this.router.navigate(['/main/deposit']);
   }
 
   navigateToTransfer(): void {
-    this.router.navigate(['/transfer']);
+    this.router.navigate(['/main/transfer']);
   }
 
   navigateToWithdraw(): void {
-    this.router.navigate(['/withdraw']);
+    this.router.navigate(['/main/withdraw']);
   }
 
   navigateToTransactions(): void {
-    this.router.navigate(['/transactions']);
+    this.router.navigate(['/main/transactions']);
   }
 
   logout(): void {

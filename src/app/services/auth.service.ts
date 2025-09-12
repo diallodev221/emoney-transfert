@@ -20,7 +20,7 @@ export class AuthService {
       country: 'Senegal',
       idNumber: 'ID123456',
       role: 'admin',
-      balance: 0,
+      balance: 20000,
       isActive: true,
       createdAt: new Date('2024-01-01')
     },
@@ -34,6 +34,19 @@ export class AuthService {
       idNumber: 'ID789012',
       role: 'user',
       balance: 1500.50,
+      isActive: true,
+      createdAt: new Date('2024-01-15')
+    },
+    {
+      id: '3',
+      firstName: 'Aissatou',
+      lastName: 'Diop',
+      phone: '987654322',
+      email: 'aissatou@email.com',
+      country: 'Senegal',
+      idNumber: 'ID789012',
+      role: 'user',
+      balance: 1000.50,
       isActive: true,
       createdAt: new Date('2024-01-15')
     }

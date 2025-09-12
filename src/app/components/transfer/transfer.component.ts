@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,7 +13,7 @@ import { User } from '../../models/user.interface';
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.css']
 })
-export class TransferComponent {
+export class TransferComponent implements OnInit {
   currentUser: User | null = null;
   transferData = {
     toUserPhone: '',
@@ -25,6 +25,7 @@ export class TransferComponent {
   loading = false;
   error = '';
   success = '';
+  users: User[] = [];
 
   constructor(
     private transactionService: TransactionService,
@@ -34,10 +35,14 @@ export class TransferComponent {
     this.currentUser = this.authService.getCurrentUser();
   }
 
+  ngOnInit(): void {
+    this.getAllUsers()
+  }
+
   calculateFees(): void {
     if (this.transferData.amount && this.transferData.amount > 0) {
       this.fees = this.transferData.amount * 0.005; // 0.5% de frais
-      this.totalAmount = this.transferData.amount + this.fees;
+      this.totalAmount = this.transferData.amount - this.fees;
     } else {
       this.fees = 0;
       this.totalAmount = 0;
@@ -78,7 +83,7 @@ export class TransferComponent {
         if (result.success) {
           this.success = `Transfert de ${this.transferData.amount}€ effectué avec succès ! (Frais: ${this.fees.toFixed(2)}€)`;
           setTimeout(() => {
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/main/dashboard']);
           }, 2000);
         } else {
           this.error = result.message || 'Erreur lors du transfert';
@@ -92,6 +97,12 @@ export class TransferComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/main/dashboard']);
+  }
+
+  getAllUsers(): void {
+    // Récupère tous les utilisateurs sauf l'utilisateur courant (pour la liste des destinataires)
+    this.users = this.authService.getAllUsers();
+   
   }
 }

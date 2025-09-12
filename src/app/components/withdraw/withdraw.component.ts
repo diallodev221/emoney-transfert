@@ -30,15 +30,15 @@ export class WithdrawComponent {
     this.currentUser = this.authService.getCurrentUser();
   }
 
-  calculateFees(): void {
-    if (this.amount && this.amount > 0) {
-      this.fees = this.amount * 0.01; // 1% de frais
-      this.totalAmount = this.amount + this.fees;
-    } else {
-      this.fees = 0;
-      this.totalAmount = 0;
-    }
-  }
+  // calculateFees(): void {
+  //   if (this.amount && this.amount > 0) {
+  //     this.fees = this.amount * 0.01; // 1% de frais
+  //     this.totalAmount = this.amount + this.fees;
+  //   } else {
+  //     this.fees = 0;
+  //     this.totalAmount = 0;
+  //   }
+  // }
 
   canWithdraw(): boolean {
     if (!this.currentUser || !this.amount || this.amount <= 0) {
@@ -68,7 +68,7 @@ export class WithdrawComponent {
         if (result.success) {
           this.success = `Retrait de ${this.amount} F CFA effectué avec succès ! (Frais: ${this.fees.toFixed(2)} F CFA)`;
           setTimeout(() => {
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/main/dashboard']);
           }, 2000);
         } else {
           this.error = result.message || 'Erreur lors du retrait';
@@ -82,6 +82,6 @@ export class WithdrawComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/main/dashboard']);
   }
 }

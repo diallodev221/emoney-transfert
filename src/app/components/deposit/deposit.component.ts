@@ -40,7 +40,7 @@ export class DepositComponent {
         if (result.success) {
           this.success = `Dépôt de ${this.amount} F CFA effectué avec succès !`;
           setTimeout(() => {
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/main/dashboard']);
           }, 2000);
         } else {
           this.error = result.message || 'Erreur lors du dépôt';
@@ -54,6 +54,6 @@ export class DepositComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/main/dashboard']);
   }
 }

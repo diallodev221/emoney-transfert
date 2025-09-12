@@ -35,6 +35,21 @@ export class TransactionService {
       description: 'Bonus de bienvenue',
       createdAt: new Date('2024-01-17'),
       processedAt: new Date('2024-01-17')
+    },
+    {
+      id: '3',
+      type: 'transfer_received',
+      amount: 500,
+      fee: 5,
+      totalAmount: 500,
+      fromUserId: '1',
+      toUserId: '2',
+      fromUser: { firstName: 'Admin', lastName: 'System', phone: '123456789' },
+      toUser: { firstName: 'Anna', lastName: 'Seck', phone: '987654321' },
+      status: 'completed',
+      description: 'Bonus de bienvenue',
+      createdAt: new Date('2024-01-17'),
+      processedAt: new Date('2024-01-17')
     }
   ];
 

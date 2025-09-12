@@ -140,6 +140,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/main/dashboard']);
   }
 }

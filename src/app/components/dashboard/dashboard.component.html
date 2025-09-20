@@ -12,10 +12,12 @@
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-blue-100 text-sm font-medium">Solde actuel</p>
-                <p class="text-4xl font-bold">{{ currentUser?.balance | currency:'XOF':'symbol':'1.2-2'  }}</p>
+                <p class="text-4xl font-bold">
+                  {{ solde | currency:'XOF':'symbol':'1.2' }}
+                </p>
               </div>
               <div class="text-right">
-                <p class="text-blue-100 text-sm">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</p>
+                <p class="text-blue-100 text-2xl font-bold">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
                 <p class="text-blue-100 text-xs">{{ currentUser?.phone }}</p>
               </div>
             </div>

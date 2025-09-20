@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TransactionService } from '../../services/transaction.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.interface';
+import { CompteService } from '../../services/compte.service';
+import { Compte } from '../../models/compte.interface';
 
 @Component({
   selector: 'app-withdraw',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './withdraw.component.html',
-  styleUrls: ['./withdraw.component.css']
+  styleUrls: ['./withdraw.component.css'],
 })
-export class WithdrawComponent {
+export class WithdrawComponent implements OnInit {
   currentUser: User | null = null;
   amount: number | null = null;
   fees = 0;
@@ -21,13 +23,22 @@ export class WithdrawComponent {
   loading = false;
   error = '';
   success = '';
+  soldeDisponible: number | undefined;
+  currentCompte: Compte | null = null
 
   constructor(
     private transactionService: TransactionService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private compteService: CompteService
   ) {
     this.currentUser = this.authService.getCurrentUser();
+  }
+
+  ngOnInit(): void {
+    if (this.currentUser) {
+      this.recupererCompteCurrentUser(this.currentUser.id)
+    }
   }
 
   // calculateFees(): void {
@@ -39,6 +50,21 @@ export class WithdrawComponent {
   //     this.totalAmount = 0;
   //   }
   // }
+
+  recupererCompteCurrentUser(userId: number) {
+    this.compteService.recuperCompteUtilisateur(userId).subscribe({
+      next: (res) => {
+        console.log('current user account: ', res);
+        this.soldeDisponible = res.solde;
+        this.currentCompte = res;
+      },
+      error(err) {
+        console.error(
+          "Erreur survenu lors de la recuperation du compte de l'utilisateur connecté"
+        );
+      },
+    });
+  }
 
   canWithdraw(): boolean {
     if (!this.currentUser || !this.amount || this.amount <= 0) {
@@ -66,7 +92,11 @@ export class WithdrawComponent {
       next: (result) => {
         this.loading = false;
         if (result.success) {
-          this.success = `Retrait de ${this.amount} F CFA effectué avec succès ! (Frais: ${this.fees.toFixed(2)} F CFA)`;
+          this.success = `Retrait de ${
+            this.amount
+          } F CFA effectué avec succès ! (Frais: ${this.fees.toFixed(
+            2
+          )} F CFA)`;
           setTimeout(() => {
             this.router.navigate(['/main/dashboard']);
           }, 2000);
@@ -77,7 +107,7 @@ export class WithdrawComponent {
       error: (error) => {
         this.loading = false;
         this.error = 'Une erreur est survenue lors du retrait';
-      }
+      },
     });
   }
 

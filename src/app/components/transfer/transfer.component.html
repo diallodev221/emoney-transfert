@@ -28,10 +28,9 @@
             </div>
             <h2 class="mt-6 text-2xl font-bold text-gray-900">Transfert d'argent</h2>
             <p class="mt-2 text-gray-600">Envoyez de l'argent à un autre utilisateur</p>
-            
             <div class="mt-4 bg-gray-50 rounded-lg p-4">
               <p class="text-sm text-gray-600">Solde disponible</p>
-              <p class="text-2xl font-bold text-gray-900">{{ currentUser?.balance | currency:'XOF':'symbol':'1.2-2' }}</p>
+              <p class="text-2xl font-bold text-gray-900">{{ soldeDisponible | currency:'XOF':'symbol':'1.2-2' }}</p>
             </div>
           </div>
 
@@ -43,13 +42,14 @@
               <select
                 id="compte"
                 name="compte"
-                [(ngModel)]="transferData.toUserPhone"
+                [(ngModel)]="transferData.solde"
                 required
+                (select)="UpdateSolde()"
                 class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="" disabled selected>Choisissez un destinataire</option>
-                <option *ngFor="let user of users" [value]="user.phone">
-                  {{ user.firstName }} ({{ user.phone }})
+                <option *ngFor="let compte of comptes" [value]="compte.id">
+                  {{ compte.utilisateur.prenom }} {{ compte.utilisateur.nom}}
                 </option>
               </select>
             </div>
@@ -132,7 +132,7 @@
 
             <button
               type="submit"
-              [disabled]="loading || !transferData.amount || transferData.amount <= 0 || !transferData.toUserPhone || !canTransfer()"
+              [disabled]="loading || !transferData.amount || transferData.amount <= 0 || !transferData.solde || !canTransfer()"
               class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span *ngIf="loading" class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>

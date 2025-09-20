@@ -1,11 +1,11 @@
 export interface Transaction {
-  id: string;
+  id: number;
   type: 'deposit' | 'withdrawal' | 'transfer_sent' | 'transfer_received';
   amount: number;
   fee: number;
   totalAmount: number;
   fromUserId?: string;
-  toUserId?: string;
+  toUserId?: number;
   fromUser?: {
     firstName: string;
     lastName: string;

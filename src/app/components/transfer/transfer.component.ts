@@ -5,20 +5,22 @@ import { Router } from '@angular/router';
 import { TransactionService } from '../../services/transaction.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.interface';
+import { CompteService } from '../../services/compte.service';
+import { Compte } from '../../models/compte.interface';
 
 @Component({
   selector: 'app-transfer',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './transfer.component.html',
-  styleUrls: ['./transfer.component.css']
+  styleUrls: ['./transfer.component.css'],
 })
 export class TransferComponent implements OnInit {
   currentUser: User | null = null;
   transferData = {
-    toUserPhone: '',
+    solde: '',
     amount: null as number | null,
-    description: ''
+    description: '',
   };
   fees = 0;
   totalAmount = 0;
@@ -27,16 +29,52 @@ export class TransferComponent implements OnInit {
   success = '';
   users: User[] = [];
 
+  comptes: Compte[] = [];
+  soldeDisponible: number = 0;
+  currentCompte: Compte | null = null;
+
   constructor(
     private transactionService: TransactionService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private compteService: CompteService
   ) {
     this.currentUser = this.authService.getCurrentUser();
   }
 
   ngOnInit(): void {
-    this.getAllUsers()
+    this.getAllUsers();
+    this.recuperComptes();
+
+    if(this.currentUser) {
+      this.recupererCompteCurrentUser(this.currentUser.id)
+    }
+  }
+
+  recupererCompteCurrentUser(userId: number) {
+    this.compteService.recuperCompteUtilisateur(userId).subscribe({
+      next: (res) => {
+        console.log("current user account: ", res)
+        this.soldeDisponible = res.solde
+        this.currentCompte = res
+      },
+      error(err) {
+        console.error("Erreur survenu lors de la recuperation du compte de l'utilisateur connecté")
+      },
+    })
+  }
+
+  recuperComptes() {
+    this.compteService.recupereListComptes().subscribe({
+      next: (res) => {
+        console.log('Comptes: ', res);
+        this.comptes = res;
+      },
+    });
+  }
+
+  UpdateSolde() {
+    this.soldeDisponible = parseInt(this.transferData.solde);
   }
 
   calculateFees(): void {
@@ -50,14 +88,22 @@ export class TransferComponent implements OnInit {
   }
 
   canTransfer(): boolean {
-    if (!this.currentUser || !this.transferData.amount || this.transferData.amount <= 0) {
+    if (
+      !this.currentUser ||
+      !this.transferData.amount ||
+      this.transferData.amount <= 0
+    ) {
       return false;
     }
     return this.currentUser.balance >= this.totalAmount;
   }
 
   onSubmit(): void {
-    if (!this.transferData.toUserPhone || !this.transferData.amount || this.transferData.amount <= 0) {
+    if (
+      !this.transferData.solde ||
+      !this.transferData.amount ||
+      this.transferData.amount <= 0
+    ) {
       this.error = 'Veuillez remplir tous les champs requis';
       return;
     }
@@ -72,28 +118,30 @@ export class TransferComponent implements OnInit {
     this.success = '';
 
     const transferRequest = {
-      toUserPhone: this.transferData.toUserPhone,
+      toUserPhone: this.transferData.solde,
       amount: this.transferData.amount,
-      description: this.transferData.description || undefined
+      description: this.transferData.description || undefined,
     };
 
-    this.transactionService.transfer(transferRequest).subscribe({
-      next: (result) => {
-        this.loading = false;
-        if (result.success) {
-          this.success = `Transfert de ${this.transferData.amount}€ effectué avec succès ! (Frais: ${this.fees.toFixed(2)}€)`;
-          setTimeout(() => {
-            this.router.navigate(['/main/dashboard']);
-          }, 2000);
-        } else {
-          this.error = result.message || 'Erreur lors du transfert';
-        }
-      },
-      error: (error) => {
-        this.loading = false;
-        this.error = 'Une erreur est survenue lors du transfert';
-      }
-    });
+    // this.transactionService.transfer(transferRequest).subscribe({
+    //   next: (result) => {
+    //     this.loading = false;
+    //     if (result.success) {
+    //       this.success = `Transfert de ${
+    //         this.transferData.amount
+    //       }€ effectué avec succès ! (Frais: ${this.fees.toFixed(2)}€)`;
+    //       setTimeout(() => {
+    //         this.router.navigate(['/main/dashboard']);
+    //       }, 2000);
+    //     } else {
+    //       this.error = result.message || 'Erreur lors du transfert';
+    //     }
+    //   },
+    //   error: (error) => {
+    //     this.loading = false;
+    //     this.error = 'Une erreur est survenue lors du transfert';
+    //   },
+    // });
   }
 
   goBack(): void {
@@ -102,7 +150,6 @@ export class TransferComponent implements OnInit {
 
   getAllUsers(): void {
     // Récupère tous les utilisateurs sauf l'utilisateur courant (pour la liste des destinataires)
-    this.users = this.authService.getAllUsers();
-   
+    // this.users = this.authService.getAllUsers();
   }
 }

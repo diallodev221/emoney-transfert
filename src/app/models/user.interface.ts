@@ -1,7 +1,8 @@
+
 export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
+  id: number;
+  prenom: string;
+  nom: string;
   phone: string;
   email?: string;
   country: string;
@@ -15,8 +16,8 @@ export interface User {
 }
 
 export interface UserRegistration {
-  firstName: string;
-  lastName: string;
+  prenom: string;
+  nom: string;
   phone: string;
   email?: string;
   country: string;
@@ -25,6 +26,13 @@ export interface UserRegistration {
 }
 
 export interface LoginCredentials {
-  phone: string;
+  email: string;
   password: string;
 }
+
+export interface LoginResponse {
+  token: string;
+  typeToken: string;
+  utilisateur: User
+}
+

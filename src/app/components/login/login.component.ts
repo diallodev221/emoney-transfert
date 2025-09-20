@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
 
 export class LoginComponent {
   credentials = {
-    phone: '',
+    email: '',
     password: ''
   };
   loading = false;
@@ -26,7 +26,7 @@ export class LoginComponent {
   ) {}
 
   onSubmit(): void {
-    if (!this.credentials.phone || !this.credentials.password) {
+    if (!this.credentials.email || !this.credentials.password) {
       this.error = 'Veuillez remplir tous les champs';
       return;
     }
@@ -36,15 +36,18 @@ export class LoginComponent {
 
     this.authService.login(this.credentials).subscribe({
       next: (result) => {
+        console.log("user: ", result.utilisateur)
+        console.log("token: ", result.token)
         this.loading = false;
-        if (result.success && result.user) {
-          if (result.user.role === 'admin') {
-            this.router.navigate(['/main/admin']);
-          } else {
-            this.router.navigate(['/main/dashboard']);
-          }
+        if (result.token && result.utilisateur) {
+
+          this.router.navigate(['/main/dashboard']);
+          // if (result.user.role === 'admin') {
+          // } else {
+          //   this.router.navigate(['/main/dashboard']);
+          // }
         } else {
-          this.error = result.message || 'Erreur lors de la connexion';
+          this.error = 'Erreur lors de la connexion';
         }
       },
       error: (error) => {

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { User } from '../../models/user.interface';
+import { Utilisateur } from '../../models/compte.interface';
 
 @Component({
   selector: 'app-header',

@@ -42,7 +42,7 @@ export class AdminComponent implements OnInit {
 
   loadData(): void {
     // Charger les utilisateurs
-    this.users = this.authService.getAllUsers().filter(u => u.role === 'user');
+    // this.users = this.authService.getAllUsers().filter(u => u.role === 'user');
     
     // Charger les transactions
     this.transactionService.getAllTransactions().subscribe({
@@ -63,21 +63,22 @@ export class AdminComponent implements OnInit {
   }
 
   getTransactionTitle(transaction: Transaction): string {
-    const user = this.users.find(u => u.id === transaction.fromUserId || u.id === transaction.toUserId);
-    const userName = user ? `${user.firstName} ${user.lastName}` : 'Utilisateur';
+    // const user = this.users.find(u => u.id === transaction.fromUserId || u.id === transaction.toUserId);
+    // const userName = user ? `${user.prenom} ${user.nom}` : 'Utilisateur';
 
-    switch (transaction.type) {
-      case 'deposit':
-        return `Dépôt - ${userName}`;
-      case 'withdrawal':
-        return `Retrait - ${userName}`;
-      case 'transfer_sent':
-        return `Transfert ${transaction.fromUser?.firstName} → ${transaction.toUser?.firstName}`;
-      case 'transfer_received':
-        return `Transfert ${transaction.fromUser?.firstName} → ${transaction.toUser?.firstName}`;
-      default:
-        return 'Transaction';
-    }
+    // switch (transaction.type) {
+    //   case 'deposit':
+    //     return `Dépôt - ${userName}`;
+    //   case 'withdrawal':
+    //     return `Retrait - ${userName}`;
+    //   case 'transfer_sent':
+    //     return `Transfert ${transaction.fromUser?.firstName} → ${transaction.toUser?.firstName}`;
+    //   case 'transfer_received':
+    //     return `Transfert ${transaction.fromUser?.firstName} → ${transaction.toUser?.firstName}`;
+    //   default:
+    //     return 'Transaction';
+    // }
+    return ""
   }
 
   getTransactionIconClass(type: string): string {

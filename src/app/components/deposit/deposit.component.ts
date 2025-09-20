@@ -1,28 +1,46 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TransactionService } from '../../services/transaction.service';
 import { AuthService } from '../../services/auth.service';
+import { CompteService } from '../../services/compte.service';
+import { Compte } from '../../models/compte.interface';
 
 @Component({
   selector: 'app-deposit',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './deposit.component.html',
-  styleUrls: ['./deposit.component.css']
+  styleUrls: ['./deposit.component.css'],
 })
-export class DepositComponent {
+export class DepositComponent implements OnInit {
   amount: number | null = null;
   loading = false;
   error = '';
   success = '';
+  compteUser: Compte | null = null;
 
   constructor(
     private transactionService: TransactionService,
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private compteService: CompteService
   ) {}
+
+  ngOnInit(): void {
+    this.recuperCompteUtilisateur();
+  }
+
+  recuperCompteUtilisateur() {
+    this.compteService.recuperCompteUtilisateur(2).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.compteUser = res;
+      },
+      error(err) {
+        console.error('Error survenu lors de la recuperation du compte');
+      },
+    });
+  }
 
   onSubmit(): void {
     if (!this.amount || this.amount <= 0) {
@@ -34,22 +52,27 @@ export class DepositComponent {
     this.error = '';
     this.success = '';
 
-    this.transactionService.deposit(this.amount).subscribe({
+    if(!this.compteUser) {
+      this.error = 'Compte est obligatoire';
+      return;
+    }
+
+    this.compteService.deposit(this.compteUser?.id, this.amount).subscribe({
       next: (result) => {
         this.loading = false;
-        if (result.success) {
+        if (result) {
           this.success = `Dépôt de ${this.amount} F CFA effectué avec succès !`;
           setTimeout(() => {
             this.router.navigate(['/main/dashboard']);
           }, 2000);
         } else {
-          this.error = result.message || 'Erreur lors du dépôt';
+          this.error = 'Erreur lors du dépôt';
         }
       },
       error: (error) => {
         this.loading = false;
         this.error = 'Une erreur est survenue lors du dépôt';
-      }
+      },
     });
   }
 

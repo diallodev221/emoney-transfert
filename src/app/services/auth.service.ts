@@ -1,109 +1,91 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
-import { User, UserRegistration, LoginCredentials } from '../models/user.interface';
+import { delay, map, tap } from 'rxjs/operators';
+import {
+  User,
+  UserRegistration,
+  LoginCredentials,
+  LoginResponse,
+} from '../models/user.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  private users: User[] = [
-    {
-      id: '1',
-      firstName: 'Admin',
-      lastName: 'System',
-      phone: '123456789',
-      email: 'admin@system.com',
-      country: 'Senegal',
-      idNumber: 'ID123456',
-      role: 'admin',
-      balance: 20000,
-      isActive: true,
-      createdAt: new Date('2024-01-01')
-    },
-    {
-      id: '2',
-      firstName: 'Anna',
-      lastName: 'Seck',
-      phone: '987654321',
-      email: 'anna@email.com',
-      country: 'Senegal',
-      idNumber: 'ID789012',
-      role: 'user',
-      balance: 1500.50,
-      isActive: true,
-      createdAt: new Date('2024-01-15')
-    },
-    {
-      id: '3',
-      firstName: 'Aissatou',
-      lastName: 'Diop',
-      phone: '987654322',
-      email: 'aissatou@email.com',
-      country: 'Senegal',
-      idNumber: 'ID789012',
-      role: 'user',
-      balance: 1000.50,
-      isActive: true,
-      createdAt: new Date('2024-01-15')
-    }
-  ];
+  private authUrl = 'http://localhost:9090/api/auth/login';
 
-  constructor() {
+  constructor(private readonly http: HttpClient) {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       this.currentUserSubject.next(JSON.parse(savedUser));
     }
+     
   }
 
-  login(credentials: LoginCredentials): Observable<{ success: boolean; user?: User; message?: string }> {
-    return of(null).pipe(
-      delay(1000),
-      map(() => {
-        const user = this.users.find(u => 
-          u.phone === credentials.phone && u.isActive
-        );
-
-        if (user) {
-          this.currentUserSubject.next(user);
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          return { success: true, user };
+  login(credentials: LoginCredentials): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.authUrl, credentials).pipe(
+      tap((res) => {
+        if (res.utilisateur) {
+          this.currentUserSubject.next(res.utilisateur);
+          localStorage.setItem('currentUser', JSON.stringify(res.utilisateur));
+          localStorage.setItem('token', res.token);
         }
-        
-        return { success: false, message: 'Numéro de téléphone ou mot de passe incorrect' };
       })
     );
+
+    // of(null).pipe(
+    //   delay(1000),
+    //   map(() => {
+    //     const user = this.users.find(u =>
+    //       u.phone === credentials.phone && u.isActive
+    //     );
+
+    //     if (user) {
+    //       this.currentUserSubject.next(user);
+    //       localStorage.setItem('currentUser', JSON.stringify(user));
+    //       return { success: true, user };
+    //     }
+
+    //     return { success: false, message: 'Numéro de téléphone ou mot de passe incorrect' };
+    //   })
+    // );
   }
 
-  register(userData: UserRegistration): Observable<{ success: boolean; user?: User; message?: string }> {
-    return of(null).pipe(
-      delay(1500),
-      map(() => {
-        if (this.users.find(u => u.phone === userData.phone)) {
-          return { success: false, message: 'Ce numéro de téléphone est déjà utilisé' };
-        }
+  // register(
+  //   userData: UserRegistration
+  // ): Observable<{ success: boolean; user?: User; message?: string }> {
+  //   return of(null).pipe(
+  //     delay(1500),
+  //     map(() => {
+  //       // if (this.users.find((u) => u.phone === userData.phone)) {
+  //       //   return {
+  //       //     success: false,
+  //       //     message: 'Ce numéro de téléphone est déjà utilisé',
+  //       //   };
+  //       // }
 
-        const newUser: User = {
-          id: (this.users.length + 1).toString(),
-          ...userData,
-          role: 'user',
-          balance: 0,
-          isActive: true,
-          createdAt: new Date()
-        };
+  //       // const newUser: User = {
+  //       //   id: (this.users.length + 1).toString(),
+  //       //   ...userData,
+  //       //   role: 'user',
+  //       //   balance: 0,
+  //       //   isActive: true,
+  //       //   createdAt: new Date(),
+  //       // };
 
-        this.users.push(newUser);
-        return { success: true, user: newUser };
-      })
-    );
-  }
+  //       // this.users.push(newUser);
+  //       return { success: true, user: null };
+  //     })
+  //   );
+  // }
 
   logout(): void {
     this.currentUserSubject.next(null);
-    localStorage.removeItem('currentUser');
+    localStorage.clear();
   }
 
   isAuthenticated(): boolean {
@@ -119,23 +101,35 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  updateUserBalance(userId: string, newBalance: number): void {
-    const userIndex = this.users.findIndex(u => u.id === userId);
-    if (userIndex !== -1) {
-      this.users[userIndex].balance = newBalance;
-      if (this.currentUserSubject.value?.id === userId) {
-        const updatedUser = { ...this.currentUserSubject.value, balance: newBalance };
-        this.currentUserSubject.next(updatedUser);
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      }
+  getAuthToken(): string | null {
+    const savedToken = localStorage.getItem('token');
+    if (!savedToken) {
+      return "";
     }
+    return savedToken
   }
 
-  findUserByPhone(phone: string): User | undefined {
-    return this.users.find(u => u.phone === phone && u.isActive);
+  updateUserBalance(userId: number, newBalance: number): void {
+    // const userIndex = this.users.findIndex((u) => u.id === userId);
+    // if (userIndex !== -1) {
+    //   this.users[userIndex].balance = newBalance;
+    //   if (this.currentUserSubject.value?.id === userId) {
+    //     const updatedUser = {
+    //       ...this.currentUserSubject.value,
+    //       balance: newBalance,
+    //     };
+    //     this.currentUserSubject.next(updatedUser);
+    //     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    //   }
+    // }
   }
 
-  getAllUsers(): User[] {
-    return this.users;
-  }
+  // findUserByPhone(phone: string): User | undefined {
+  //   // return this.users.find((u) => u.phone === phone && u.isActive);
+  //   return null
+  // }
+
+  // getAllUsers(): User[] {
+  //   return this.users;
+  // }
 }

@@ -5,6 +5,8 @@ import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
 import { User } from '../../models/user.interface';
 import { Transaction } from '../../models/transaction.interface';
+import { CompteService } from '../../services/compte.service';
+import { Compte } from '../../models/compte.interface';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,16 +18,35 @@ import { Transaction } from '../../models/transaction.interface';
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   recentTransactions: Transaction[] = [];
+  solde: number | undefined;
 
   constructor(
     private authService: AuthService,
     private transactionService: TransactionService,
-    private router: Router
+    private router: Router,
+    private readonly compteService: CompteService
   ) {}
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
     this.loadRecentTransactions();
+    this.currentUser = this.authService.getCurrentUser();
+    if(this.currentUser) {
+      this.getSolde(this.currentUser.id)
+    }
+  }
+
+
+
+  getSolde(userId: number) {
+    this.compteService.recuperCompteUtilisateur(userId).subscribe({
+      next: (res) => {
+        this.solde = res.solde
+        console.log("solde: ", res.solde)
+      },
+      error(err) {
+        console.error("Erreur survenu lors de la récupération du solde.")
+      },
+    })
   }
 
   loadRecentTransactions(): void {

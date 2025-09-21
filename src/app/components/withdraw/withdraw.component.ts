@@ -41,15 +41,15 @@ export class WithdrawComponent implements OnInit {
     }
   }
 
-  // calculateFees(): void {
-  //   if (this.amount && this.amount > 0) {
-  //     this.fees = this.amount * 0.01; // 1% de frais
-  //     this.totalAmount = this.amount + this.fees;
-  //   } else {
-  //     this.fees = 0;
-  //     this.totalAmount = 0;
-  //   }
-  // }
+  calculateFees(): void {
+    if (this.amount && this.amount > 0) {
+      this.fees = this.amount * 0.01; // 1% de frais
+      this.totalAmount = this.amount + this.fees;
+    } else {
+      this.fees = 0;
+      this.totalAmount = 0;
+    }
+  }
 
   recupererCompteCurrentUser(userId: number) {
     this.compteService.recuperCompteUtilisateur(userId).subscribe({
@@ -67,10 +67,10 @@ export class WithdrawComponent implements OnInit {
   }
 
   canWithdraw(): boolean {
-    if (!this.currentUser || !this.amount || this.amount <= 0) {
+    if (!this.currentCompte || !this.amount || this.amount <= 0) {
       return false;
     }
-    return this.currentUser.balance >= this.totalAmount;
+    return this.currentCompte?.solde >= this.amount;
   }
 
   onSubmit(): void {
@@ -84,14 +84,21 @@ export class WithdrawComponent implements OnInit {
       return;
     }
 
+    if(!this.currentCompte) {
+      this.error = "Un compte est obligatoire"
+      return;
+    }
+
     this.loading = true;
     this.error = '';
     this.success = '';
 
-    this.transactionService.withdraw(this.amount).subscribe({
+
+
+    this.compteService.retrait(this.currentCompte.id, this.totalAmount).subscribe({
       next: (result) => {
         this.loading = false;
-        if (result.success) {
+        if (result) {
           this.success = `Retrait de ${
             this.amount
           } F CFA effectué avec succès ! (Frais: ${this.fees.toFixed(
@@ -101,7 +108,7 @@ export class WithdrawComponent implements OnInit {
             this.router.navigate(['/main/dashboard']);
           }, 2000);
         } else {
-          this.error = result.message || 'Erreur lors du retrait';
+          this.error = 'Erreur lors du retrait';
         }
       },
       error: (error) => {

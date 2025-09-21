@@ -3,10 +3,11 @@ export interface Compte {
   solde: number;
   active: boolean;
   dateCreation: string;
-  utilisateur: Utilisateur;
+  utilisateur: UtilisateurCompte;
+  numeroCompte: string;
 }
 
-export interface Utilisateur {
+export interface UtilisateurCompte {
   id: number;
   prenom: string;
   nom: string;

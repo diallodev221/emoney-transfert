@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { delay, map, tap } from 'rxjs/operators';
 import { Transaction, TransferRequest } from '../models/transaction.interface';
 import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
@@ -54,6 +54,8 @@ export class TransactionService {
   //   },
   // ];
 
+  private urltransaction: string = 'http://localhost:9090/api/transactions';
+
   private transactionsSubject = new BehaviorSubject<Transaction[]>([]);
   public transactions$ = this.transactionsSubject.asObservable();
 
@@ -95,10 +97,7 @@ export class TransactionService {
         // this.transactions.push(transaction);
         // this.transactionsSubject.next([...this.transactions]);
 
-        this.authService.updateUserBalance(
-          currentUser.id,
-          currentUser.balance + amount
-        );
+        this.authService.updateUserBalance(currentUser.id, amount);
 
         return { success: true, transaction };
       })
@@ -110,8 +109,8 @@ export class TransactionService {
     message?: string;
     transaction?: Transaction;
   }> {
-    return of()
-    
+    return of();
+
     // .pipe(
     //   delay(2000),
     //   map(() => {
@@ -137,21 +136,21 @@ export class TransactionService {
     //       };
     //     }
 
-        // const transaction: Transaction = {
-        //   id: (this.transactions.length + 1).toString(),
-        //   type: 'withdrawal',
-        //   amount,
-        //   fee,
-        //   totalAmount,
-        //   fromUserId: currentUser.id,
-        //   status: 'completed',
-        //   description: "Retrait d'argent",
-        //   createdAt: new Date(),
-        //   processedAt: new Date(),
-        // };
+    // const transaction: Transaction = {
+    //   id: (this.transactions.length + 1).toString(),
+    //   type: 'withdrawal',
+    //   amount,
+    //   fee,
+    //   totalAmount,
+    //   fromUserId: currentUser.id,
+    //   status: 'completed',
+    //   description: "Retrait d'argent",
+    //   createdAt: new Date(),
+    //   processedAt: new Date(),
+    // };
 
-        // this.transactions.push(transaction);
-        // this.transactionsSubject.next([...this.transactions]);
+    // this.transactions.push(transaction);
+    // this.transactionsSubject.next([...this.transactions]);
 
     //     this.authService.updateUserBalance(
     //       currentUser.id,
@@ -164,6 +163,13 @@ export class TransactionService {
   }
 
   transfer(transferData: TransferRequest) {
+    return this.http.post(
+      `${this.urltransaction}/${transferData.compteSourceId}`,
+      {
+        destinataireId: transferData.compteDestinataireId,
+        montant: transferData.amount,
+      }
+    ).pipe(tap(res => console.log("response: ", res)))
     // return of(null).pipe(
     //   delay(2000),
     //   map(() => {

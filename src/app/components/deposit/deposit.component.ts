@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TransactionService } from '../../services/transaction.service';
 import { AuthService } from '../../services/auth.service';
 import { CompteService } from '../../services/compte.service';
 import { Compte } from '../../models/compte.interface';
+import { User } from '../../models/user.interface';
 
 @Component({
   selector: 'app-deposit',
@@ -19,19 +19,24 @@ export class DepositComponent implements OnInit {
   error = '';
   success = '';
   compteUser: Compte | null = null;
+  currentUser: User | null = null;
 
   constructor(
-    private transactionService: TransactionService,
     private router: Router,
-    private compteService: CompteService
-  ) {}
-
-  ngOnInit(): void {
-    this.recuperCompteUtilisateur();
+    private compteService: CompteService,
+    private authService: AuthService
+  ) {
+    this.currentUser = this.authService.getCurrentUser();
   }
 
-  recuperCompteUtilisateur() {
-    this.compteService.recuperCompteUtilisateur(2).subscribe({
+  ngOnInit(): void {
+    if(this.currentUser) {
+      this.recuperCompteUtilisateur(this.currentUser.id);
+    }
+  }
+
+  recuperCompteUtilisateur(userId: number) {
+    this.compteService.recuperCompteUtilisateur(userId).subscribe({
       next: (res) => {
         console.log(res);
         this.compteUser = res;
@@ -52,7 +57,7 @@ export class DepositComponent implements OnInit {
     this.error = '';
     this.success = '';
 
-    if(!this.compteUser) {
+    if (!this.compteUser) {
       this.error = 'Compte est obligatoire';
       return;
     }

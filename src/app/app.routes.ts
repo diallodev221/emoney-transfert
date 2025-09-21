@@ -59,6 +59,13 @@ export const routes: Routes = [
             (m) => m.ComptesComponent
           ),
       },
+      {
+        path: 'utilisateurs',
+        loadComponent: () =>
+          import('./components/utilisateurs/utilisateurs.component').then(
+            (m) => m.UtilisateursComponent
+          ),
+      },
     ],
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },

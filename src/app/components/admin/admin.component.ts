@@ -57,7 +57,7 @@ export class AdminComponent implements OnInit {
     this.stats = {
       totalUsers: this.users.length,
       totalTransactions: transactions.length,
-      totalBalance: this.users.reduce((sum, user) => sum + user.balance, 0),
+      totalBalance: this.users.reduce((sum, user) => sum , 0),
       totalFees: transactions.reduce((sum, transaction) => sum + transaction.fee, 0)
     };
   }

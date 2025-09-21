@@ -23,7 +23,8 @@ export interface Transaction {
 }
 
 export interface TransferRequest {
-  toUserPhone: string;
+  compteSourceId: number;
   amount: number;
   description?: string;
+  compteDestinataireId: number
 }

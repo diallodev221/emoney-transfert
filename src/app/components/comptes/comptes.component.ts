@@ -24,7 +24,7 @@ export class ComptesComponent implements OnInit {
   ngOnInit(): void {
     this.compteService.recupereListComptes().subscribe((data) => {
       this.comptes = data;
-      console.log(data)
+      console.log("liste comptes: ", data)
     });
     this.loadData();
   }

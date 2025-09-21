@@ -24,10 +24,9 @@ export class WithdrawComponent implements OnInit {
   error = '';
   success = '';
   soldeDisponible: number | undefined;
-  currentCompte: Compte | null = null
+  currentCompte: Compte | null = null;
 
   constructor(
-    private transactionService: TransactionService,
     private authService: AuthService,
     private router: Router,
     private compteService: CompteService
@@ -37,17 +36,7 @@ export class WithdrawComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.currentUser) {
-      this.recupererCompteCurrentUser(this.currentUser.id)
-    }
-  }
-
-  calculateFees(): void {
-    if (this.amount && this.amount > 0) {
-      this.fees = this.amount * 0.01; // 1% de frais
-      this.totalAmount = this.amount + this.fees;
-    } else {
-      this.fees = 0;
-      this.totalAmount = 0;
+      this.recupererCompteCurrentUser(this.currentUser.id);
     }
   }
 
@@ -84,8 +73,8 @@ export class WithdrawComponent implements OnInit {
       return;
     }
 
-    if(!this.currentCompte) {
-      this.error = "Un compte est obligatoire"
+    if (!this.currentCompte) {
+      this.error = 'Un compte est obligatoire';
       return;
     }
 
@@ -93,17 +82,11 @@ export class WithdrawComponent implements OnInit {
     this.error = '';
     this.success = '';
 
-
-
-    this.compteService.retrait(this.currentCompte.id, this.totalAmount).subscribe({
+    this.compteService.retrait(this.currentCompte.id, this.amount).subscribe({
       next: (result) => {
         this.loading = false;
         if (result) {
-          this.success = `Retrait de ${
-            this.amount
-          } F CFA effectué avec succès ! (Frais: ${this.fees.toFixed(
-            2
-          )} F CFA)`;
+          this.success = `Retrait de ${this.amount} F CFA effectué avec succès !`;
           setTimeout(() => {
             this.router.navigate(['/main/dashboard']);
           }, 2000);

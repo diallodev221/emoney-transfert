@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.interface';
 import { CompteService } from '../../services/compte.service';
 import { Compte } from '../../models/compte.interface';
+import { TransferRequest } from '../../models/transaction.interface';
 
 @Component({
   selector: 'app-transfer',
@@ -18,7 +19,7 @@ import { Compte } from '../../models/compte.interface';
 export class TransferComponent implements OnInit {
   currentUser: User | null = null;
   transferData = {
-    solde: '',
+    compteDst: '',
     amount: null as number | null,
     description: '',
   };
@@ -34,21 +35,22 @@ export class TransferComponent implements OnInit {
   currentCompte: Compte | null = null;
 
   constructor(
-    private transactionService: TransactionService,
     private authService: AuthService,
     private router: Router,
-    private compteService: CompteService
+    private compteService: CompteService,
+    private transactionService: TransactionService
   ) {
     this.currentUser = this.authService.getCurrentUser();
   }
 
   ngOnInit(): void {
-    this.getAllUsers();
     this.recuperComptes();
 
     if(this.currentUser) {
-      this.recupererCompteCurrentUser(this.currentUser.id)
+      this.recupererCompteCurrentUser(this.currentUser.id);
     }
+
+
   }
 
   recupererCompteCurrentUser(userId: number) {
@@ -65,7 +67,7 @@ export class TransferComponent implements OnInit {
   }
 
   recuperComptes() {
-    this.compteService.recupereListComptes().subscribe({
+    this.compteService.recupereListComptesAEnvoyer().subscribe({
       next: (res) => {
         console.log('Comptes: ', res);
         this.comptes = res;
@@ -73,9 +75,7 @@ export class TransferComponent implements OnInit {
     });
   }
 
-  UpdateSolde() {
-    this.soldeDisponible = parseInt(this.transferData.solde);
-  }
+  
 
   calculateFees(): void {
     if (this.transferData.amount && this.transferData.amount > 0) {
@@ -89,20 +89,21 @@ export class TransferComponent implements OnInit {
 
   canTransfer(): boolean {
     if (
-      !this.currentUser ||
+      !this.currentCompte ||
       !this.transferData.amount ||
       this.transferData.amount <= 0
     ) {
       return false;
     }
-    return this.currentUser.balance >= this.totalAmount;
+    return this.currentCompte?.solde >= this.totalAmount;
   }
 
   onSubmit(): void {
     if (
-      !this.transferData.solde ||
+      !this.transferData.compteDst ||
       !this.transferData.amount ||
-      this.transferData.amount <= 0
+      this.transferData.amount <= 0 ||
+      !this.currentCompte
     ) {
       this.error = 'Veuillez remplir tous les champs requis';
       return;
@@ -117,39 +118,39 @@ export class TransferComponent implements OnInit {
     this.error = '';
     this.success = '';
 
-    const transferRequest = {
-      toUserPhone: this.transferData.solde,
+  
+
+    const transferRequest: TransferRequest = {
+      compteSourceId: this.currentCompte.id,
       amount: this.transferData.amount,
       description: this.transferData.description || undefined,
+      compteDestinataireId: parseInt(this.transferData.compteDst),
     };
 
-    // this.transactionService.transfer(transferRequest).subscribe({
-    //   next: (result) => {
-    //     this.loading = false;
-    //     if (result.success) {
-    //       this.success = `Transfert de ${
-    //         this.transferData.amount
-    //       }€ effectué avec succès ! (Frais: ${this.fees.toFixed(2)}€)`;
-    //       setTimeout(() => {
-    //         this.router.navigate(['/main/dashboard']);
-    //       }, 2000);
-    //     } else {
-    //       this.error = result.message || 'Erreur lors du transfert';
-    //     }
-    //   },
-    //   error: (error) => {
-    //     this.loading = false;
-    //     this.error = 'Une erreur est survenue lors du transfert';
-    //   },
-    // });
+    console.log("Transaction: ", transferRequest)
+
+    this.transactionService.transfer(transferRequest).subscribe({
+      next: (result) => {
+        this.loading = false;
+        if (result) {
+          this.success = `Transfert de ${
+            this.transferData.amount
+          }CFA effectué avec succès ! (Frais: ${this.fees.toFixed(2)} CFA)`;
+          setTimeout(() => {
+            this.router.navigate(['/main/dashboard']);
+          }, 2000);
+        } else {
+          this.error = 'Erreur lors du transfert';
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        this.error = 'Une erreur est survenue lors du transfert';
+      },
+    });
   }
 
   goBack(): void {
     this.router.navigate(['/main/dashboard']);
-  }
-
-  getAllUsers(): void {
-    // Récupère tous les utilisateurs sauf l'utilisateur courant (pour la liste des destinataires)
-    // this.users = this.authService.getAllUsers();
   }
 }

@@ -12,8 +12,16 @@ export class CompteService {
   constructor(private http: HttpClient) {}
 
   // recupere la liste des comptes
-  recupereListComptes() {
+  recupereListComptesAcitesAEnvoyer() {
     return this.http.get<Compte[]>(`${this.sprignbootUrl}/actifs`);
+  }
+
+  recupereListComptesAEnvoyer() {
+    return this.http.get<Compte[]>(`${this.sprignbootUrl}/envoyees`);
+  }
+
+  recupereListComptes() {
+    return this.http.get<Compte[]>(`${this.sprignbootUrl}`);
   }
 
   recuperCompteUtilisateur(userId: number) {
@@ -35,6 +43,6 @@ export class CompteService {
   }
 
   getSolde() {
-    return this.http.get<{ solde : number}>(`${this.sprignbootUrl}/solde`);
+    return this.http.get<{ solde: number }>(`${this.sprignbootUrl}/solde`);
   }
 }

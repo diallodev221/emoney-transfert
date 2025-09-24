@@ -1,52 +1,52 @@
 <nav class="sidebar modern-sidebar" aria-label="Main navigation">
     
     <ul class="sidebar-menu" role="menu">
-        <li>
+        <li *accessControl="'ADMIN','USER'">
             <a routerLink="/main/dashboard" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="Home" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="LayoutDashboard" size="20"></lucide-icon></span>
                 <span>Tableau de bord</span>
             </a>
         </li>
-        <li>
+        <li *accessControl="'ADMIN','USER'">
             <a routerLink="/main/transactions" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="List" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="Receipt" size="20"></lucide-icon></span>
                 <span>Transactions</span>
             </a>
         </li>
-        <li>
+        <li *accessControl="'ADMIN','USER'">
             <a routerLink="/main/deposit" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="ArrowDownToLine" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="Banknote" size="20"></lucide-icon></span>
                 <span>Dépôt</span>
             </a>
         </li>
-        <li>
+        <li *accessControl="'ADMIN','USER'">
             <a routerLink="/main/withdraw" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="ArrowUpToLine" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="CreditCard" size="20"></lucide-icon></span>
                 <span>Retrait</span>
             </a>
         </li>
-        <li>
+        <li *accessControl="'ADMIN','USER'">
             <a routerLink="/main/transfer" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="Send" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="Repeat" size="20"></lucide-icon></span>
                 <span>Virement</span>
             </a>
         </li>
-        <li class="sidebar-section">Administration</li>
-        <li>
+        <li class="sidebar-section" *accessControl="'ADMIN'">Administration</li>
+        <li *accessControl="'ADMIN'">
             <a routerLink="/main/admin" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="UserCog" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="Settings" size="20"></lucide-icon></span>
                 <span>Administration</span>
             </a>
         </li>
-        <li>
+        <li *accessControl="'ADMIN'">
             <a routerLink="/main/comptes" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="UserCog" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="Users" size="20"></lucide-icon></span>
                 <span>Comptes</span>
             </a>
         </li>
-        <li>
+        <li *accessControl="'ADMIN'">
             <a routerLink="/main/utilisateurs" routerLinkActive="active">
-                <span class="sidebar-icon"><lucide-icon name="Account" size="20"></lucide-icon></span>
+                <span class="sidebar-icon"><lucide-icon name="User" size="20"></lucide-icon></span>
                 <span>Utilisateurs</span>
             </a>
         </li>

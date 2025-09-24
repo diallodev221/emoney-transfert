@@ -80,7 +80,7 @@ export class TransferComponent implements OnInit {
   calculateFees(): void {
     if (this.transferData.amount && this.transferData.amount > 0) {
       this.fees = this.transferData.amount * 0.005; // 0.5% de frais
-      this.totalAmount = this.transferData.amount - this.fees;
+      this.totalAmount = this.transferData.amount + this.fees;
     } else {
       this.fees = 0;
       this.totalAmount = 0;
@@ -127,21 +127,16 @@ export class TransferComponent implements OnInit {
       compteDestinataireId: parseInt(this.transferData.compteDst),
     };
 
-    console.log("Transaction: ", transferRequest)
 
     this.transactionService.transfer(transferRequest).subscribe({
-      next: (result) => {
+      next: () => {
         this.loading = false;
-        if (result) {
-          this.success = `Transfert de ${
-            this.transferData.amount
-          }CFA effectué avec succès ! (Frais: ${this.fees.toFixed(2)} CFA)`;
-          setTimeout(() => {
-            this.router.navigate(['/main/dashboard']);
-          }, 2000);
-        } else {
-          this.error = 'Erreur lors du transfert';
-        }
+        this.success = `Transfert de ${
+          this.transferData.amount
+        }CFA effectué avec succès ! (Frais: ${this.fees.toFixed(2)} CFA)`;
+        setTimeout(() => {
+          this.router.navigate(['/main/dashboard']);
+        }, 2000);
       },
       error: (error) => {
         this.loading = false;

@@ -15,4 +15,8 @@ export class UtilisateurService {
     recuperListUtilisateurs() {
         return this.http.get<User[]>(this.url)
     }
+
+    updateUserStatus(userId: number, status: boolean) {
+        return this.http.put(`${this.url}/${userId}/status?status=${status}`,{});
+    }
 }

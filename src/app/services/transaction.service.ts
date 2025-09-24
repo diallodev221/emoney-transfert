@@ -9,51 +9,6 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class TransactionService {
-  // private transactions: Transaction[] = [
-  //   {
-  //     id: '1',
-  //     type: 'deposit',
-  //     amount: 1000,
-  //     fee: 0,
-  //     totalAmount: 1000,
-  //     toUserId: '2',
-  //     status: 'completed',
-  //     description: 'Dépôt initial',
-  //     createdAt: new Date('2024-01-16'),
-  //     processedAt: new Date('2024-01-16'),
-  //   },
-  //   {
-  //     id: '2',
-  //     type: 'transfer_received',
-  //     amount: 500,
-  //     fee: 5,
-  //     totalAmount: 500,
-  //     fromUserId: '1',
-  //     toUserId: '2',
-  //     fromUser: { firstName: 'Admin', lastName: 'System', phone: '123456789' },
-  //     toUser: { firstName: 'Anna', lastName: 'Seck', phone: '987654321' },
-  //     status: 'completed',
-  //     description: 'Bonus de bienvenue',
-  //     createdAt: new Date('2024-01-17'),
-  //     processedAt: new Date('2024-01-17'),
-  //   },
-  //   {
-  //     id: '3',
-  //     type: 'transfer_received',
-  //     amount: 500,
-  //     fee: 5,
-  //     totalAmount: 500,
-  //     fromUserId: '1',
-  //     toUserId: '2',
-  //     fromUser: { firstName: 'Admin', lastName: 'System', phone: '123456789' },
-  //     toUser: { firstName: 'Anna', lastName: 'Seck', phone: '987654321' },
-  //     status: 'completed',
-  //     description: 'Bonus de bienvenue',
-  //     createdAt: new Date('2024-01-17'),
-  //     processedAt: new Date('2024-01-17'),
-  //   },
-  // ];
-
   private urltransaction: string = 'http://localhost:9090/api/transactions';
 
   private transactionsSubject = new BehaviorSubject<Transaction[]>([]);
@@ -61,115 +16,13 @@ export class TransactionService {
 
   constructor(private authService: AuthService, private http: HttpClient) {}
 
-  deposit(amount: number): Observable<{
-    success: boolean;
-    message?: string;
-    transaction?: Transaction;
-  }> {
-    return of(null).pipe(
-      delay(2000),
-      map(() => {
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser) {
-          return { success: false, message: 'Utilisateur non connecté' };
-        }
-
-        if (amount <= 0) {
-          return {
-            success: false,
-            message: 'Le montant doit être supérieur à 0',
-          };
-        }
-
-        const transaction: Transaction = {
-          id: 1,
-          type: 'deposit',
-          amount,
-          fee: 0,
-          totalAmount: amount,
-          toUserId: currentUser.id,
-          status: 'completed',
-          description: "Dépôt d'argent",
-          createdAt: new Date(),
-          processedAt: new Date(),
-        };
-
-        // this.transactions.push(transaction);
-        // this.transactionsSubject.next([...this.transactions]);
-
-        this.authService.updateUserBalance(currentUser.id, amount);
-
-        return { success: true, transaction };
-      })
-    );
-  }
-
-  withdraw(amount: number): Observable<{
-    success: boolean;
-    message?: string;
-    transaction?: Transaction;
-  }> {
-    return of();
-
-    // .pipe(
-    //   delay(2000),
-    //   map(() => {
-    //     const currentUser = this.authService.getCurrentUser();
-    //     if (!currentUser) {
-    //       return { success: false, message: 'Utilisateur non connecté' };
-    //     }
-
-    //     if (amount <= 0) {
-    //       return {
-    //         success: false,
-    //         message: 'Le montant doit être supérieur à 0',
-    //       };
-    //     }
-
-    //     const fee = amount * 0.01; // 1% de frais
-    //     const totalAmount = amount + fee;
-
-    //     if (currentUser.balance < totalAmount) {
-    //       return {
-    //         success: false,
-    //         message: 'Solde insuffisant (frais de 1% inclus)',
-    //       };
-    //     }
-
-    // const transaction: Transaction = {
-    //   id: (this.transactions.length + 1).toString(),
-    //   type: 'withdrawal',
-    //   amount,
-    //   fee,
-    //   totalAmount,
-    //   fromUserId: currentUser.id,
-    //   status: 'completed',
-    //   description: "Retrait d'argent",
-    //   createdAt: new Date(),
-    //   processedAt: new Date(),
-    // };
-
-    // this.transactions.push(transaction);
-    // this.transactionsSubject.next([...this.transactions]);
-
-    //     this.authService.updateUserBalance(
-    //       currentUser.id,
-    //       currentUser.balance - totalAmount
-    //     );
-
-    //     return of();
-    //   })
-    // );
-  }
-
   transfer(transferData: TransferRequest) {
-    return this.http.post(
-      `${this.urltransaction}/${transferData.compteSourceId}`,
-      {
+    return this.http
+      .post(`${this.urltransaction}/${transferData.compteSourceId}`, {
         destinataireId: transferData.compteDestinataireId,
         montant: transferData.amount,
-      }
-    ).pipe(tap(res => console.log("response: ", res)))
+      })
+      .pipe(tap((res) => console.log('response: ', res)));
     // return of(null).pipe(
     //   delay(2000),
     //   map(() => {
@@ -240,28 +93,20 @@ export class TransactionService {
     // );
   }
 
-  getUserTransactions(userId: number): Observable<Transaction[]> {
-    // return this.transactions$.pipe(
-    //   map((transactions) =>
-    //     transactions
-    //       .filter((t) => t.fromUserId === userId || t.toUserId === userId)
-    //       .sort(
-    //         (a, b) =>
-    //           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    //       )
-    //   )
-    // );
-    return of();
+  getUserTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.urltransaction}/current-user`);
+  }
+
+  get10RecentTransactionsOfCurrentUser(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.urltransaction}/10-recent`);
   }
 
   getAllTransactions(): Observable<Transaction[]> {
-    return this.transactions$.pipe(
-      map((transactions) =>
-        [...transactions].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-      )
-    );
+    return this.http.get<Transaction[]>(`${this.urltransaction}`);
+  }
+
+  getFilteredTransactions(type: string, status: string): Observable<Transaction[]> {
+    console.log(type, status)
+    return this.http.get<Transaction[]>(`${this.urltransaction}/filter?type=${type}&status=${status}`);
   }
 }

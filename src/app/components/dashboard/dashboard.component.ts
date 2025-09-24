@@ -7,13 +7,14 @@ import { User } from '../../models/user.interface';
 import { Transaction } from '../../models/transaction.interface';
 import { CompteService } from '../../services/compte.service';
 import { Compte } from '../../models/compte.interface';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
@@ -25,50 +26,51 @@ export class DashboardComponent implements OnInit {
     private transactionService: TransactionService,
     private router: Router,
     private readonly compteService: CompteService
+    
   ) {}
 
   ngOnInit(): void {
-    this.loadRecentTransactions();
     this.currentUser = this.authService.getCurrentUser();
-    if(this.currentUser) {
-      this.getSolde(this.currentUser.id)
+    if (this.currentUser) {
+      this.getSolde(this.currentUser.id);
     }
+    this.load10RecentTransactions();
   }
-
-
 
   getSolde(userId: number) {
     this.compteService.recuperCompteUtilisateur(userId).subscribe({
       next: (res) => {
-        this.solde = res.solde
-        console.log("solde: ", res.solde)
+        this.solde = res.solde;
+        console.log('solde: ', res.solde);
       },
       error(err) {
-        console.error("Erreur survenu lors de la récupération du solde.")
+        console.error('Erreur survenu lors de la récupération du solde.');
+      },
+    });
+  }
+
+  load10RecentTransactions(): void { 
+    this.transactionService.get10RecentTransactionsOfCurrentUser().subscribe({
+      next: (res) => {
+        this.recentTransactions = res
+        console.log("transactions: ", res)
+      },
+      error() {
+        console.error("Erreur survenu lors de la recuperation des 10 récents transactions")
       },
     })
   }
 
-  loadRecentTransactions(): void {
-    if (this.currentUser) {
-      this.transactionService.getUserTransactions(this.currentUser.id).subscribe({
-        next: (transactions) => {
-          this.recentTransactions = transactions.slice(0, 5);
-        }
-      });
-    }
-  }
-
   getTransactionTitle(transaction: Transaction): string {
     switch (transaction.type) {
-      case 'deposit':
-        return 'Dépôt d\'argent';
-      case 'withdrawal':
-        return 'Retrait d\'argent';
-      case 'transfer_sent':
-        return `Transfert vers ${transaction.toUser?.firstName} ${transaction.toUser?.lastName}`;
-      case 'transfer_received':
-        return `Reçu de ${transaction.fromUser?.firstName} ${transaction.fromUser?.lastName}`;
+      case 'DEPOSIT':
+        return "Dépôt d'argent";
+      case 'WITHDRAWAL':
+        return "Retrait d'argent";
+      case 'TRANSFER_SENT':
+        return `Transfert vers ${transaction.source?.utilisateur?.prenom} ${transaction.source?.utilisateur?.nom}`;
+      case 'TRANSFER_RECEIVED':
+        return `Reçu de ${transaction.destinataire?.utilisateur?.prenom} ${transaction.destinataire?.utilisateur?.nom}`;
       default:
         return 'Transaction';
     }
@@ -76,13 +78,13 @@ export class DashboardComponent implements OnInit {
 
   getTransactionIconClass(type: string): string {
     switch (type) {
-      case 'deposit':
+      case 'DEPOSIT':
         return 'bg-green-100 text-green-600';
-      case 'withdrawal':
+      case 'WITHDRAWAL':
         return 'bg-red-100 text-red-600';
-      case 'transfer_sent':
+      case 'TRANSFERT_SENT':
         return 'bg-blue-100 text-blue-600';
-      case 'transfer_received':
+      case 'TRANSFERT_RECEIVED':
         return 'bg-purple-100 text-purple-600';
       default:
         return 'bg-gray-100 text-gray-600';
@@ -92,10 +94,10 @@ export class DashboardComponent implements OnInit {
   getAmountClass(type: string): string {
     switch (type) {
       case 'deposit':
-      case 'transfer_received':
+      case 'TRANSFERT_RECEIVED':
         return 'text-green-600';
-      case 'withdrawal':
-      case 'transfer_sent':
+      case 'WITHDRAWAL':
+      case 'TRANSFERT_SENT':
         return 'text-red-600';
       default:
         return 'text-gray-900';
@@ -103,8 +105,15 @@ export class DashboardComponent implements OnInit {
   }
 
   getTransactionAmountDisplay(transaction: Transaction): string {
-    const prefix = (transaction.type === 'deposit' || transaction.type === 'transfer_received') ? '+' : '-';
-    const amount = transaction.type === 'transfer_sent' ? transaction.totalAmount : transaction.amount;
+    const prefix =
+      transaction.type === 'DEPOSIT' ||
+      transaction.type === 'TRANSFER_RECEIVED'
+        ? '+'
+        : '-';
+    const amount =
+      transaction.type === 'TRANSFER_SENT'
+        ? transaction.totalAmount
+        : transaction.montant;
     return `${prefix}${amount.toFixed(2)} F CFA`;
   }
 

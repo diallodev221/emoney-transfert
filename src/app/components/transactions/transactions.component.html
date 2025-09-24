@@ -28,14 +28,11 @@
               <select
                 id="filter-type"
                 [(ngModel)]="selectedType"
-                (change)="applyFilters()"
+                (change)="loadFilteredTransactions()"
                 class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Tous les types</option>
-                <option value="deposit">Dépôts</option>
-                <option value="withdrawal">Retraits</option>
-                <option value="transfer_sent">Transferts envoyés</option>
-                <option value="transfer_received">Transferts reçus</option>
+                <option *ngFor="let status of typesList" [value]="status.value">{{status.libelle}}</option>
               </select>
             </div>
             
@@ -44,13 +41,12 @@
               <select
                 id="filter-status"
                 [(ngModel)]="selectedStatus"
-                (change)="applyFilters()"
+                (change)="loadFilteredTransactions()"
                 class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Tous les statuts</option>
-                <option value="completed">Terminé</option>
-                <option value="pending">En attente</option>
-                <option value="failed">Échoué</option>
+                <option *ngFor="let status of statusList" [value]="status.value">{{status.libelle}}</option>
+
               </select>
             </div>
 
@@ -87,10 +83,10 @@
                   <div class="flex-shrink-0">
                     <div [ngClass]="getTransactionIconClass(transaction.type)" class="h-12 w-12 rounded-full flex items-center justify-center">
                       <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path *ngIf="transaction.type === 'deposit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path>
-                        <path *ngIf="transaction.type === 'withdrawal'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        <path *ngIf="transaction.type === 'transfer_sent'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-                        <path *ngIf="transaction.type === 'transfer_received'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        <path *ngIf="transaction.type === 'DEPOSIT'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path>
+                        <path *ngIf="transaction.type === 'WITHDRAWAL'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path *ngIf="transaction.type === 'TRANSFER_SENT'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                        <path *ngIf="transaction.type === 'TRANSFER_RECEIVED'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                       </svg>
                     </div>
                   </div>
@@ -98,7 +94,7 @@
                     <p class="text-sm font-medium text-gray-900">{{ getTransactionTitle(transaction) }}</p>
                     <p *ngIf="transaction.description" class="text-xs text-gray-500 mt-1">{{ transaction.description }}</p>
                     <div class="flex items-center mt-1 space-x-2">
-                      <p class="text-xs text-gray-500">{{ transaction.createdAt | date:'medium':'fr' }}</p>
+                      <p class="text-xs text-gray-500">{{ transaction.date | date:'medium':'fr' }}</p>
                       <span [ngClass]="getStatusClass(transaction.status)" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium">
                         {{ getStatusText(transaction.status) }}
                       </span>
@@ -109,8 +105,8 @@
                   <p [ngClass]="getAmountClass(transaction.type)" class="text-sm font-medium">
                     {{ getTransactionAmountDisplay(transaction) }}
                   </p>
-                  <p *ngIf="transaction.fee > 0" class="text-xs text-gray-500 mt-1">
-                    Frais: {{ transaction.fee | currency:'XOF':'symbol':'1.2-2' }}
+                  <p *ngIf="transaction.frais > 0" class="text-xs text-gray-500 mt-1">
+                    Frais: {{ transaction.frais | currency:'XOF':'symbol':'1.2-2' }}
                   </p>
                 </div>
               </div>

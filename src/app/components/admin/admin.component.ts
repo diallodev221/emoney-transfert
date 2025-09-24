@@ -5,61 +5,79 @@ import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
 import { User } from '../../models/user.interface';
 import { Transaction } from '../../models/transaction.interface';
+import { CompteService } from '../../services/compte.service';
+import { UtilisateurService } from '../../services/utilisateur.service';
+import { DashboardService } from '../../services/dashboard.service';
+import { AdminStatistics } from '../../models/admin.interface';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+  styleUrls: ['./admin.component.css'],
 })
 export class AdminComponent implements OnInit {
   currentUser: User | null = null;
   users: User[] = [];
   recentTransactions: Transaction[] = [];
-  stats = {
+  stats: AdminStatistics = {
     totalUsers: 0,
     totalTransactions: 0,
     totalBalance: 0,
-    totalFees: 0
+    totalFees: 0,
   };
 
   constructor(
     private authService: AuthService,
     private transactionService: TransactionService,
-    private router: Router
+    private router: Router,
+    private compteService: CompteService,
+    private utilisateurService: UtilisateurService,
+    private readonly dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    if (!this.currentUser || this.currentUser.role !== 'admin') {
-      this.router.navigate(['/login']);
-      return;
-    }
-
     this.loadData();
+    this.getStatistics();
   }
 
   loadData(): void {
     // Charger les utilisateurs
-    // this.users = this.authService.getAllUsers().filter(u => u.role === 'user');
-    
+    this.utilisateurService.recuperListUtilisateurs().subscribe((data) => {
+      this.users = data;
+      console.log('users: ', data);
+    });
+
     // Charger les transactions
     this.transactionService.getAllTransactions().subscribe({
       next: (transactions) => {
         this.recentTransactions = transactions.slice(0, 10);
-        this.calculateStats(transactions);
-      }
+      },
     });
   }
 
-  calculateStats(transactions: Transaction[]): void {
-    this.stats = {
-      totalUsers: this.users.length,
-      totalTransactions: transactions.length,
-      totalBalance: this.users.reduce((sum, user) => sum , 0),
-      totalFees: transactions.reduce((sum, transaction) => sum + transaction.fee, 0)
-    };
+  getStatistics() {
+    this.dashboardService.getStatistics().subscribe({
+      next: (res: AdminStatistics) => {
+        console.table(res);
+        this.stats = res;
+      },
+    });
+  }
+
+  load10RecentTransactions(): void {
+    this.transactionService.get10RecentTransactionsOfCurrentUser().subscribe({
+      next: (res) => {
+        this.recentTransactions = res;
+      },
+      error() {
+        console.error(
+          'Erreur survenu lors de la recuperation des 10 récents transactions'
+        );
+      },
+    });
   }
 
   getTransactionTitle(transaction: Transaction): string {
@@ -78,7 +96,7 @@ export class AdminComponent implements OnInit {
     //   default:
     //     return 'Transaction';
     // }
-    return ""
+    return '';
   }
 
   getTransactionIconClass(type: string): string {

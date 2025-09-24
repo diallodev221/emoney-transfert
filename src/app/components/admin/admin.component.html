@@ -1,179 +1,330 @@
 <div class="min-h-screen bg-gray-50">
-  
-      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- En-tête -->
-        <div class="px-4 py-6 sm:px-0">
-          <h1 class="text-3xl font-bold text-gray-900">Tableau de bord administrateur</h1>
-          <p class="mt-2 text-gray-600">Gestion des utilisateurs et supervision des transactions</p>
-        </div>
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-2">
+    <!-- En-tête -->
+    <div class="px-4 py-6 sm:px-0">
+      <h1 class="text-3xl font-bold text-gray-900">
+        Tableau de bord administrateur
+      </h1>
+      <p class="mt-2 text-gray-600">
+        Gestion des utilisateurs et supervision des transactions
+      </p>
+    </div>
 
-        <!-- Statistiques générales -->
-        <div class="px-4 py-6 sm:px-0">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <div class="flex items-center">
-                <div class="flex-shrink-0">
-                  <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <p class="text-2xl font-bold text-gray-900">{{ stats.totalUsers }}</p>
-                  <p class="text-sm text-gray-500">Utilisateurs</p>
-                </div>
+    <!-- Statistiques générales -->
+    <div class="px-4 py-6 sm:px-0">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div
+                class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="h-6 w-6 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  ></path>
+                </svg>
               </div>
             </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <div class="flex items-center">
-                <div class="flex-shrink-0">
-                  <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <p class="text-2xl font-bold text-gray-900">{{ stats.totalTransactions }}</p>
-                  <p class="text-sm text-gray-500">Transactions</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <div class="flex items-center">
-                <div class="flex-shrink-0">
-                  <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <p class="text-2xl font-bold text-gray-900">{{ stats.totalBalance | currency:'XOF':'symbol':'1.2-2' }}</p>
-                  <p class="text-sm text-gray-500">Solde total</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <div class="flex items-center">
-                <div class="flex-shrink-0">
-                  <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="ml-4">
-                  <p class="text-2xl font-bold text-gray-900">{{ stats.totalFees | currency:'XOF':'symbol':'1.2-2' }}</p>
-                  <p class="text-sm text-gray-500">Revenus frais</p>
-                </div>
-              </div>
+            <div class="ml-4">
+              <p class="text-2xl font-bold text-gray-900">
+                {{ stats.totalUsers }}
+              </p>
+              <p class="text-sm text-gray-500">Utilisateurs</p>
             </div>
           </div>
+        </div>
 
-          <!-- Sections -->
-          <div class="space-y-8">
-            <!-- Gestion des utilisateurs -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-              <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Gestion des utilisateurs</h3>
-              </div>
-              
-              <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pays</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solde</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inscription</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                    <tr *ngFor="let user of users">
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                          <div class="flex-shrink-0 h-10 w-10">
-                            <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <span class="text-sm font-medium text-gray-700">
-                                {{ user.prenom.charAt(0) }}{{ user.nom.charAt(0) }}
-                              </span>
-                            </div>
-                          </div>
-                          <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-900">
-                              {{ user.prenom }} {{ user.nom }}
-                            </div>
-                            <div class="text-sm text-gray-500">ID: {{ user.idNumber }}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ user.phone }}</div>
-                        <div class="text-sm text-gray-500">{{ user.email || 'N/A' }}</div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ user.country }}
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">
-                          {{ user.balance | currency:'XOF':'symbol':'1.2-2' }}
-                        </div>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap">
-                        <span [ngClass]="user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
-                              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                          {{ user.isActive ? 'Actif' : 'Inactif' }}
-                        </span>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ user.createdAt | date:'short':'fr' }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div
+                class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="h-6 w-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  ></path>
+                </svg>
               </div>
             </div>
+            <div class="ml-4">
+              <p class="text-2xl font-bold text-gray-900">
+                {{ stats.totalTransactions }}
+              </p>
+              <p class="text-sm text-gray-500">Transactions</p>
+            </div>
+          </div>
+        </div>
 
-            <!-- Transactions récentes -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-              <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Transactions récentes</h3>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div
+                class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="h-6 w-6 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  ></path>
+                </svg>
               </div>
-              
-              <div class="divide-y divide-gray-200">
-                <div *ngFor="let transaction of recentTransactions" class="px-6 py-4">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0">
-                        <div [ngClass]="getTransactionIconClass(transaction.type)" class="h-10 w-10 rounded-full flex items-center justify-center">
-                          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path *ngIf="transaction.type === 'deposit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path>
-                            <path *ngIf="transaction.type === 'withdrawal'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            <path *ngIf="transaction.type === 'transfer_sent'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-                            <path *ngIf="transaction.type === 'transfer_received'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-900">{{ getTransactionTitle(transaction) }}</p>
-                        <p *ngIf="transaction.description" class="text-xs text-gray-500 mt-1">{{ transaction.description }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ transaction.createdAt | date:'short':'fr' }}</p>
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <p class="text-sm font-medium text-gray-900">{{ transaction.amount | currency:'XOF':'symbol':'1.2-2' }}</p>
-                      <p *ngIf="transaction.fee > 0" class="text-xs text-green-600">
-                        Frais: +{{ transaction.fee | currency:'XOF':'symbol':'1.2-2' }}
-                      </p>
+            </div>
+            <div class="ml-4">
+              <p class="text-2xl font-bold text-gray-900">
+                {{ stats.totalBalance | currency : "XOF" : "symbol" : "1.1" }}
+              </p>
+              <p class="text-sm text-gray-500">Solde total</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div
+                class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="h-6 w-6 text-yellow-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <p class="text-2xl font-bold text-gray-900">
+                {{ stats.totalFees | currency : "XOF" : "symbol" : "1.1" }}
+              </p>
+              <p class="text-sm text-gray-500">Revenus frais</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sections -->
+      <div class="space-y-8">
+        <!-- Gestion des utilisateurs -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">
+              Gestion des utilisateurs
+            </h3>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    ID
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Prénom
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Nom
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Email
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Téléphone
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Pays
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    N° Pièce
+                  </th>
+
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Profil
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let user of users">
+                  <td class="px-6 py-4 whitespace-nowrap">{{ user.id }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ user.prenom }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ user.nom }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ user.email || "N/A" }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ user?.telephone }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ user?.pays }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ user?.numeroPiece }}
+                  </td>
+                  <!-- <td class="px-6 py-4 whitespace-nowrap">
+              <img
+                *ngIf="user.photo"
+                [src]="user.photo"
+                alt="Photo"
+                class="h-10 w-10 rounded-full object-cover"
+              />
+              <span *ngIf="!user.photo" class="text-xs text-gray-400">N/A</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <img
+                *ngIf="user.idPhoto || user.photoPiece"
+                [src]="user.idPhoto || user.photoPiece"
+                alt="Photo Pièce"
+                class="h-10 w-10 rounded object-cover border"
+              />
+              <span
+                *ngIf="!(user.idPhoto || user?.photoPiece)"
+                class="text-xs text-gray-400"
+                >N/A</span
+              >
+            </td> -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    {{ user?.profile?.name }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Transactions récentes -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">
+              Transactions récentes
+            </h3>
+          </div>
+
+          <div class="divide-y divide-gray-200">
+            <div
+              *ngFor="let transaction of recentTransactions"
+              class="px-6 py-4"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <div
+                      [ngClass]="getTransactionIconClass(transaction.type)"
+                      class="h-10 w-10 rounded-full flex items-center justify-center"
+                    >
+                      <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          *ngIf="transaction.type === 'DEPOSIT'"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 6v12m6-6H6"
+                        ></path>
+                        <path
+                          *ngIf="transaction.type === 'WITHDRAWAL'"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                        <path
+                          *ngIf="transaction.type === 'TRANSFER_SENT'"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                        ></path>
+                        <path
+                          *ngIf="transaction.type === 'TRANSFER_RECEIVED'"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        ></path>
+                      </svg>
                     </div>
                   </div>
+                  <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-900">
+                      {{ getTransactionTitle(transaction) }}
+                    </p>
+                    <p
+                      *ngIf="transaction.description"
+                      class="text-xs text-gray-500 mt-1"
+                    >
+                      {{ transaction.description }}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">
+                      {{ transaction.date | date : "short" : "fr" }}
+                    </p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-gray-900">
+                    {{
+                      transaction.montant | currency : "XOF" : "symbol" : "1.2-2"
+                    }}
+                  </p>
+                  <p
+                    *ngIf="transaction.frais > 0"
+                    class="text-xs text-green-600"
+                  >
+                    Frais: +{{
+                      transaction.frais | currency : "XOF" : "symbol" : "1.2-2"
+                    }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -181,3 +332,5 @@
         </div>
       </div>
     </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { LucideAngularModule, Home, List, ArrowDownToLine, ArrowUpToLine, Send, UserCog } from 'lucide-angular';
+import { LucideAngularModule, Home, List, ArrowDownToLine, ArrowUpToLine, Send, UserCog, LayoutDashboard, Receipt, Banknote, CreditCard, Repeat, Settings, Users, User, Pencil, UserX, UserCheck } from 'lucide-angular';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -19,6 +19,17 @@ export const appConfig: ApplicationConfig = {
         ArrowUpToLine,
         Send,
         UserCog,
+        LayoutDashboard,
+        Receipt,
+        Banknote,
+        CreditCard,
+        Repeat,
+        Settings,
+        Users,
+        User,
+        Pencil,
+        UserX,
+        UserCheck
       })
     ),
   ],

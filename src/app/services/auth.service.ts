@@ -36,23 +36,6 @@ export class AuthService {
         }
       })
     );
-
-    // of(null).pipe(
-    //   delay(1000),
-    //   map(() => {
-    //     const user = this.users.find(u =>
-    //       u.phone === credentials.phone && u.isActive
-    //     );
-
-    //     if (user) {
-    //       this.currentUserSubject.next(user);
-    //       localStorage.setItem('currentUser', JSON.stringify(user));
-    //       return { success: true, user };
-    //     }
-
-    //     return { success: false, message: 'Numéro de téléphone ou mot de passe incorrect' };
-    //   })
-    // );
   }
 
   // register(
@@ -88,13 +71,14 @@ export class AuthService {
     localStorage.clear();
   }
 
+
   isAuthenticated(): boolean {
     return this.currentUserSubject.value !== null;
   }
 
   isAdmin(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.role === 'admin';
+    return user?.profile?.name === 'admin';
   }
 
   getCurrentUser(): User | null {

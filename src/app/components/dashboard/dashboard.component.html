@@ -18,7 +18,6 @@
               </div>
               <div class="text-right">
                 <p class="text-blue-100 text-2xl font-bold">{{ currentUser?.prenom }} {{ currentUser?.nom }}</p>
-                <p class="text-blue-100 text-xs">{{ currentUser?.phone }}</p>
               </div>
             </div>
           </div>
@@ -100,24 +99,24 @@
                     <div class="flex-shrink-0">
                       <div [ngClass]="getTransactionIconClass(transaction.type)" class="h-10 w-10 rounded-full flex items-center justify-center">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path *ngIf="transaction.type === 'deposit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path>
-                          <path *ngIf="transaction.type === 'withdrawal'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                          <path *ngIf="transaction.type === 'transfer_sent'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-                          <path *ngIf="transaction.type === 'transfer_received'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                          <path *ngIf="transaction.type === 'DEPOSIT'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path>
+                          <path *ngIf="transaction.type === 'WITHDRAWAL'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                          <path *ngIf="transaction.type === 'TRANSFER_SENT'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                          <path *ngIf="transaction.type === 'TRANSFER_RECEIVED'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                         </svg>
                       </div>
                     </div>
                     <div class="ml-4">
                       <p class="text-sm font-medium text-gray-900">{{ getTransactionTitle(transaction) }}</p>
-                      <p class="text-xs text-gray-500">{{ transaction.createdAt | date:'short':'fr' }}</p>
+                      <p class="text-xs text-gray-500">{{ transaction.date | date:'short':'fr' }}</p>
                     </div>
                   </div>
                   <div class="text-right">
                     <p [ngClass]="getAmountClass(transaction.type)" class="text-sm font-medium">
                       {{ getTransactionAmountDisplay(transaction) }}
                     </p>
-                    <p *ngIf="transaction.fee > 0" class="text-xs text-gray-500">
-                      Frais: {{ transaction.fee | currency:'XOF':'symbol':'1.2-2' }}
+                    <p *ngIf="transaction.frais > 0" class="text-xs text-gray-500">
+                      Frais: {{ transaction.frais | currency:'XOF':'symbol':'1.2-2' }}
                     </p>
                   </div>
                 </div>

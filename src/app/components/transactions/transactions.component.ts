@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
-import { Transaction } from '../../models/transaction.interface';    
+import { Transaction, TransactionStatus, TransactionType } from '../../models/transaction.interface';    
 import { FormsModule } from '@angular/forms'; //ce que g ajoute
 
 
@@ -12,13 +12,27 @@ import { FormsModule } from '@angular/forms'; //ce que g ajoute
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './transactions.component.html',
-  styleUrls: ['./transactions.component.css']
+  styleUrls: ['./transactions.component.css'],
 })
 export class TransactionsComponent implements OnInit {
   allTransactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
-  selectedType = '';
-  selectedStatus = '';
+  selectedType: TransactionType | string = '';
+  selectedStatus: TransactionStatus | string = '';
+
+  // Définition des statuts pour affichage dans les filtres ou ailleurs
+  statusList: { libelle: string; value: TransactionStatus }[] = [
+    { libelle: 'Terminé', value: TransactionStatus.TERMINE },
+    { libelle: 'En cours', value: TransactionStatus.EN_COURS },
+    { libelle: 'Échoué', value: TransactionStatus.ECHOUE },
+  ];
+
+  typesList: { libelle: string; value: TransactionType }[] = [
+    { libelle: 'Dépôt', value: TransactionType.DEPOSIT },
+    { libelle: 'Retrait', value: TransactionType.WITHDRAWAL },
+    { libelle: 'Transfert envoyé', value: TransactionType.TRANSFER_SENT },
+    { libelle: 'Transfert reçu', value: TransactionType.TRANSFER_RECEIVED },
+  ];
 
   constructor(
     private authService: AuthService,
@@ -27,32 +41,40 @@ export class TransactionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadTransactions();
-  }
-
-  loadTransactions(): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      this.transactionService.getUserTransactions(currentUser.id).subscribe({
-        next: (transactions) => {
-          this.allTransactions = transactions;
-          this.filteredTransactions = [...transactions];
-        }
-      });
-    }
-  }
-
-  applyFilters(): void {
-    this.filteredTransactions = this.allTransactions.filter(transaction => {
-      if (this.selectedType && transaction.type !== this.selectedType) {
-        return false;
-      }
-      if (this.selectedStatus && transaction.status !== this.selectedStatus) {
-        return false;
-      }
-      return true;
+    this.transactionService.getUserTransactions().subscribe({
+      next: (res) => {
+        console.log('transactions: ', res);
+      },
     });
+    this.loadFilteredTransactions();
   }
+
+  loadFilteredTransactions(): void {
+    this.transactionService
+      .getFilteredTransactions(this.selectedType, this.selectedStatus)
+      .subscribe({
+        next: (res) => {
+          this.filteredTransactions = res;
+        },
+        error() {
+          console.error(
+            'Erreur survenu lors de la recuperation des 10 récents transactions'
+          );
+        },
+      });
+  }
+
+  // applyFilters(): void {
+  //   this.filteredTransactions = this.allTransactions.filter((transaction) => {
+  //     if (this.selectedType && transaction.type !== this.selectedType) {
+  //       return false;
+  //     }
+  //     if (this.selectedStatus && transaction.status !== this.selectedStatus) {
+  //       return false;
+  //     }
+  //     return true;
+  //   });
+  // }
 
   resetFilters(): void {
     this.selectedType = '';
@@ -62,14 +84,14 @@ export class TransactionsComponent implements OnInit {
 
   getTransactionTitle(transaction: Transaction): string {
     switch (transaction.type) {
-      case 'deposit':
-        return 'Dépôt d\'argent';
-      case 'withdrawal':
-        return 'Retrait d\'argent';
-      case 'transfer_sent':
-        return `Transfert vers ${transaction.toUser?.firstName} ${transaction.toUser?.lastName}`;
-      case 'transfer_received':
-        return `Reçu de ${transaction.fromUser?.firstName} ${transaction.fromUser?.lastName}`;
+      case 'DEPOSIT':
+        return "Dépôt d'argent";
+      case 'WITHDRAWAL':
+        return "Retrait d'argent";
+      case 'TRANSFER_SENT':
+        return `Transfert vers ${transaction.source?.utilisateur?.prenom} ${transaction.source?.utilisateur?.nom}`;
+      case 'TRANSFER_RECEIVED':
+        return `Reçu de ${transaction.destinataire?.utilisateur?.prenom} ${transaction.destinataire?.utilisateur?.nom}`;
       default:
         return 'Transaction';
     }
@@ -77,13 +99,13 @@ export class TransactionsComponent implements OnInit {
 
   getTransactionIconClass(type: string): string {
     switch (type) {
-      case 'deposit':
+      case 'DEPOSIT':
         return 'bg-green-100 text-green-600';
-      case 'withdrawal':
+      case 'WITHDRAWAL':
         return 'bg-red-100 text-red-600';
-      case 'transfer_sent':
+      case 'TRASFERT_SENT':
         return 'bg-blue-100 text-blue-600';
-      case 'transfer_received':
+      case 'TRASFERT_RECEIVED':
         return 'bg-purple-100 text-purple-600';
       default:
         return 'bg-gray-100 text-gray-600';
@@ -92,11 +114,11 @@ export class TransactionsComponent implements OnInit {
 
   getAmountClass(type: string): string {
     switch (type) {
-      case 'deposit':
-      case 'transfer_received':
+      case 'DEPOSIT':
+      case 'TRASFERT_RECEIVED':
         return 'text-green-600';
-      case 'withdrawal':
-      case 'transfer_sent':
+      case 'WITHDRAWAL':
+      case 'TRASFERT_SENT':
         return 'text-red-600';
       default:
         return 'text-gray-900';
@@ -104,9 +126,15 @@ export class TransactionsComponent implements OnInit {
   }
 
   getTransactionAmountDisplay(transaction: Transaction): string {
-    const prefix = (transaction.type === 'deposit' || transaction.type === 'transfer_received') ? '+' : '-';
-    const amount = transaction.type === 'transfer_sent' ? transaction.totalAmount : transaction.amount;
-    return `${prefix}${amount.toFixed(2)} €`;
+    const prefix =
+      transaction.type === 'DEPOSIT' || transaction.type === 'TRANSFER_RECEIVED'
+        ? '+'
+        : '-';
+    const amount =
+      transaction.type === 'TRANSFER_SENT'
+        ? transaction.totalAmount
+        : transaction.montant;
+    return `${prefix}${amount.toFixed(1)} FCFA`;
   }
 
   getStatusClass(status: string): string {

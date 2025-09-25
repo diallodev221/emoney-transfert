@@ -44,7 +44,7 @@ export class AccessControlDirective implements OnInit, OnDestroy {
       this.show();
       return;
     }
-
+    console.log("roles: ", this._roles)
     // Check if userRole is in allowed roles (case-insensitive)
     if (userRole && this._roles.some(role => role.toLowerCase() === userRole.toLowerCase())) {
       this.show();

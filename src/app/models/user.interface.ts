@@ -28,15 +28,14 @@ export interface Profile {
   name: string;
   description: string;
 }
-
 export interface UserRegistration {
   prenom: string;
   nom: string;
-  phone: string;
+  telephone: string;
   email?: string;
-  country: string;
-  idNumber: string;
-  password: string;
+  pays: string;
+  numeroPiece: string;
+  motDePasse: string;
 }
 
 export interface LoginCredentials {

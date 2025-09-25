@@ -1,31 +1,31 @@
 <nav class="sidebar modern-sidebar" aria-label="Main navigation">
     
     <ul class="sidebar-menu" role="menu">
-        <li *accessControl="'ADMIN','USER'">
+        <li *accessControl="['ADMIN','UTILISATEUR']">
             <a routerLink="/main/dashboard" routerLinkActive="active">
                 <span class="sidebar-icon"><lucide-icon name="LayoutDashboard" size="20"></lucide-icon></span>
                 <span>Tableau de bord</span>
             </a>
         </li>
-        <li *accessControl="'ADMIN','USER'">
+        <li *accessControl="['ADMIN','UTILISATEUR']">
             <a routerLink="/main/transactions" routerLinkActive="active">
                 <span class="sidebar-icon"><lucide-icon name="Receipt" size="20"></lucide-icon></span>
                 <span>Transactions</span>
             </a>
         </li>
-        <li *accessControl="'ADMIN','USER'">
+        <li *accessControl="['ADMIN','UTILISATEUR']">
             <a routerLink="/main/deposit" routerLinkActive="active">
                 <span class="sidebar-icon"><lucide-icon name="Banknote" size="20"></lucide-icon></span>
                 <span>Dépôt</span>
             </a>
         </li>
-        <li *accessControl="'ADMIN','USER'">
+        <li *accessControl="['ADMIN','UTILISATEUR']">
             <a routerLink="/main/withdraw" routerLinkActive="active">
                 <span class="sidebar-icon"><lucide-icon name="CreditCard" size="20"></lucide-icon></span>
                 <span>Retrait</span>
             </a>
         </li>
-        <li *accessControl="'ADMIN','USER'">
+        <li *accessControl="['ADMIN','UTILISATEUR']">
             <a routerLink="/main/transfer" routerLinkActive="active">
                 <span class="sidebar-icon"><lucide-icon name="Repeat" size="20"></lucide-icon></span>
                 <span>Virement</span>

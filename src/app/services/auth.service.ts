@@ -16,7 +16,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  private authUrl = 'http://localhost:9090/api/auth/login';
+  private authUrl = 'http://localhost:9090/api/auth';
 
   constructor(private readonly http: HttpClient) {
     const savedUser = localStorage.getItem('currentUser');
@@ -27,44 +27,25 @@ export class AuthService {
   }
 
   login(credentials: LoginCredentials): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.authUrl, credentials).pipe(
-      tap((res) => {
-        if (res.utilisateur) {
-          this.currentUserSubject.next(res.utilisateur);
-          localStorage.setItem('currentUser', JSON.stringify(res.utilisateur));
-          localStorage.setItem('token', res.token);
-        }
-      })
-    );
+    return this.http
+      .post<LoginResponse>(`${this.authUrl}/login`, credentials)
+      .pipe(
+        tap((res) => {
+          if (res.utilisateur) {
+            this.currentUserSubject.next(res.utilisateur);
+            localStorage.setItem(
+              'currentUser',
+              JSON.stringify(res.utilisateur)
+            );
+            localStorage.setItem('token', res.token);
+          }
+        })
+      );
   }
 
-  // register(
-  //   userData: UserRegistration
-  // ): Observable<{ success: boolean; user?: User; message?: string }> {
-  //   return of(null).pipe(
-  //     delay(1500),
-  //     map(() => {
-  //       // if (this.users.find((u) => u.phone === userData.phone)) {
-  //       //   return {
-  //       //     success: false,
-  //       //     message: 'Ce numéro de téléphone est déjà utilisé',
-  //       //   };
-  //       // }
-
-  //       // const newUser: User = {
-  //       //   id: (this.users.length + 1).toString(),
-  //       //   ...userData,
-  //       //   role: 'user',
-  //       //   balance: 0,
-  //       //   isActive: true,
-  //       //   createdAt: new Date(),
-  //       // };
-
-  //       // this.users.push(newUser);
-  //       return { success: true, user: null };
-  //     })
-  //   );
-  // }
+  register(userData: UserRegistration): Observable<User> {
+    return this.http.post<User>(`${this.authUrl}/register`, userData)
+  }
 
   logout(): void {
     this.currentUserSubject.next(null);

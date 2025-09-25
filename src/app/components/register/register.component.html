@@ -39,12 +39,12 @@
             </div>
 
             <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700">Numéro de téléphone *</label>
+              <label for="telephone" class="block text-sm font-medium text-gray-700">Numéro de téléphone *</label>
               <input
-                id="phone"
-                name="phone"
+                id="telephone"
+                name="telephone"
                 type="tel"
-                [(ngModel)]="userData.phone"
+                [(ngModel)]="userData.telephone"
                 required
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
@@ -63,11 +63,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label for="country" class="block text-sm font-medium text-gray-700">Pays *</label>
+                <label for="pays" class="block text-sm font-medium text-gray-700">Pays *</label>
                 <select
-                  id="country"
-                  name="country"
-                  [(ngModel)]="userData.country"
+                  id="pays"
+                  name="pays"
+                  [(ngModel)]="userData.pays"
                   required
                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
@@ -83,12 +83,12 @@
               </div>
 
               <div>
-                <label for="idNumber" class="block text-sm font-medium text-gray-700">Numéro de pièce d'identité *</label>
+                <label for="numeroPiece" class="block text-sm font-medium text-gray-700">Numéro de pièce d'identité *</label>
                 <input
-                  id="idNumber"
-                  name="idNumber"
+                  id="numeroPiece"
+                  name="numeroPiece"
                   type="text"
-                  [(ngModel)]="userData.idNumber"
+                  [(ngModel)]="userData.numeroPiece"
                   required
                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -96,12 +96,12 @@
             </div>
 
             <div>
-              <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe *</label>
+              <label for="motDePasse" class="block text-sm font-medium text-gray-700">Mot de passe *</label>
               <input
-                id="password"
-                name="password"
-                type="password"
-                [(ngModel)]="userData.password"
+                id="motDePasse"
+                name="motDePasse"
+                type="motDePasse"
+                [(ngModel)]="userData.motDePasse"
                 required
                 minlength="6"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
